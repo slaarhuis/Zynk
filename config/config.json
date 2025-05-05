@@ -1,6 +1,6 @@
 {
   "development": {
-    "username": "stephan",
+    "username": "postgres",
     "password": "password",
     "database": "zynk_templafy_dev",
     "host": "127.0.0.1",
