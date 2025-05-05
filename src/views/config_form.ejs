@@ -1,0 +1,118 @@
+<h2><%= title %></h2>
+
+<% if (error) { %>
+  <p style="color: red;"><%= error %></p>
+<% } %>
+<% if (success) { %>
+  <p style="color: green;">Settings updated successfully!</p>
+<% } %>
+
+<form action="/admin/config" method="POST">
+
+  <h3>Templafy Connector Settings</h3>
+  <p>Settings for how Templafy connects to *this* service.</p>
+  <div>
+    <label for="templafyConnector.defaultLimit">Default Content Limit:</label>
+    <input type="number" id="templafyConnector.defaultLimit" name="templafyConnector.defaultLimit" value="<%= settings["templafyConnector.defaultLimit"] || 20 %>" min="1">
+    <small>Max items per page in content browser.</small>
+  </div>
+  <div>
+    <label for="templafyConnector.allowSearch">Allow Search:</label>
+    <input type="checkbox" id="templafyConnector.allowSearch" name="templafyConnector.allowSearch" <%= settings["templafyConnector.allowSearch"] ? 'checked' : '' %>>
+    <small>Enable search functionality in content browser (if supported).</small>
+  </div>
+  <div>
+    <label for="templafyConnector.clientId">Client ID:</label>
+    <input type="text" id="templafyConnector.clientId" name="templafyConnector.clientId" value="<%= settings["templafyConnector.clientId"] || '' %>" style="width: 300px;">
+    <button type="button" onclick="generateCredential('templafyConnector.clientId')">Generate</button>
+    <button type="button" onclick="copyCredential('templafyConnector.clientId')">Copy</button>
+    <small>Client ID for Templafy to authenticate with this service (OAuth 2.0).</small>
+  </div>
+   <div>
+    <label for="templafyConnector.clientSecret">Client Secret:</label>
+    <input type="password" id="templafyConnector.clientSecret" name="templafyConnector.clientSecret" value="<%= settings["templafyConnector.clientSecret"] || '' %>" style="width: 300px;">
+    <button type="button" onclick="generateCredential('templafyConnector.clientSecret')">Generate</button>
+    <button type="button" onclick="copyCredential('templafyConnector.clientSecret')">Copy</button>
+    <small>Client Secret for Templafy to authenticate with this service (OAuth 2.0).</small>
+  </div>
+
+  <hr>
+
+  <h3>Templafy DocGen Configuration</h3>
+  <p>Settings for how *this* service connects to the Templafy Document Generation API.</p>
+  <div>
+    <label for="templafyConfig.tenantId">Templafy Tenant ID:</label>
+    <input type="text" id="templafyConfig.tenantId" name="templafyConfig.tenantId" value="<%= settings["templafyConfig.tenantId"] || '' %>" required>
+    <small>Your Templafy tenant ID (e.g., yourtenant).</small>
+  </div>
+   <div>
+    <label for="templafyConfig.apiVersion">Templafy API Version:</label>
+    <input type="text" id="templafyConfig.apiVersion" name="templafyConfig.apiVersion" value="<%= settings["templafyConfig.apiVersion"] || 'v1' %>" required>
+    <small>The Templafy API version to use (e.g., v1).</small>
+  </div>
+   <div>
+    <label for="templafyConfig.bearerToken">Templafy API Bearer Token:</label>
+    <input type="password" id="templafyConfig.bearerToken" name="templafyConfig.bearerToken" value="<%= settings["templafyConfig.bearerToken"] || '' %>" style="width: 400px;">
+    <small>Static Bearer token for accessing the Templafy DocGen API.</small>
+  </div>
+  <div>
+    <label for="docGenConfig.useTestEmail">Use Test Email for DocGen:</label>
+    <input type="checkbox" id="docGenConfig.useTestEmail" name="docGenConfig.useTestEmail" <%= settings["docGenConfig.useTestEmail"] ? 'checked' : '' %>>
+    <small>If checked, use the email below instead of the one from the x-TemplafyUser header (workaround).</small>
+  </div>
+  <div>
+    <label for="docGenConfig.testEmail">Test Email Address:</label>
+    <input type="email" id="docGenConfig.testEmail" name="docGenConfig.testEmail" value="<%= settings["docGenConfig.testEmail"] || '' %>" style="width: 300px;">
+    <small>Email address to use for DocGen API calls if the checkbox above is checked.</small>
+  </div>
+
+  <hr>
+
+  <button type="submit">Save Settings</button>
+</form>
+
+<p><a href="/admin/dashboard">Back to Dashboard</a></p>
+
+<!-- Add JavaScript for Generate/Copy buttons later -->
+<script>
+  function generateCredential(fieldId) {
+    // Basic random string generation (not cryptographically secure for secrets)
+    const randomString = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    const input = document.getElementById(fieldId);
+    if (input) {
+      input.value = randomString;
+      alert("Generated a random string. Remember to save settings.");
+    } else {
+      alert("Input field not found.");
+    }
+  }
+
+  function copyCredential(fieldId) {
+    const input = document.getElementById(fieldId);
+    if (input) {
+      // Temporarily change type to text to allow selection if it's password
+      const originalType = input.type;
+      if (originalType === 'password') {
+          input.type = 'text';
+      }
+      input.select();
+      input.setSelectionRange(0, 99999); // For mobile devices
+      try {
+        navigator.clipboard.writeText(input.value);
+        alert("Copied to clipboard!");
+      } catch (err) {
+        alert("Failed to copy. Please copy manually.");
+        console.error('Failed to copy text: ', err);
+      }
+      // Restore original type if changed
+      if (originalType === 'password') {
+          input.type = originalType;
+      }
+      // Deselect text
+      window.getSelection().removeAllRanges();
+    } else {
+      alert("Input field not found.");
+    }
+  }
+</script>
+

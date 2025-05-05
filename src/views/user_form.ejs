@@ -1,0 +1,27 @@
+<h2><%= title %></h2>
+
+<% if (error) { %>
+    <p class="error"><%= error %></p>
+<% } %>
+
+<%# Determine action URL based on whether editing or creating %>
+<% const actionUrl = editUser ? `/admin/users/${editUser.id}?_method=PUT` : 
+"/admin/users"; %>
+<form action="<%= actionUrl %>" method="post">
+    <div>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" value="<%= editUser ? editUser.username : '' %>" required <%= editUser ? 'disabled' : '' %>>
+        <% if (editUser) { %> <small>(Username cannot be changed)</small> <% } %>
+    </div>
+    <div>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" <%= editUser ? '' : 'required' %>>
+        <% if (editUser) { %> <small>(Leave blank to keep current password)</small> <% } %>
+    </div>
+    <%# TODO: Add fields for roles/permissions if implemented %>
+    <div>
+        <button type="submit"><%= editUser ? 'Update' : 'Add' %> User</button>
+        <a href="/admin/users">Cancel</a>
+    </div>
+</form>
+

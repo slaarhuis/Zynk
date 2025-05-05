@@ -1,0 +1,11 @@
+{
+  "templafyConnector": {
+    "defaultLimit": 20,
+    "allowSearch": true
+  },
+  "templafyConfig": {
+    "tenantId": "",
+    "apiVersion": "v1",
+    "bearerToken": ""
+  }
+}

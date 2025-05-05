@@ -1,0 +1,83 @@
+<h2><%= title %></h2>
+
+<a href="/admin/templates/new">Add New Item</a>
+
+<% if (templates && templates.length > 0) { %>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Space ID</th>
+                <th>Asset ID</th>
+                <th>Type</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% templates.forEach(template => { %>
+                <tr>
+                    <td><%= template.name %></td>
+                    <td><%= template.description %></td>
+                    <td><%= template.spaceId %></td>
+                    <td><%= template.assetId %></td>
+                    <td><%= template.documentType %></td>
+                    <td>
+                        <!-- TODO: Add Edit/Delete links -->
+                        <a href="/admin/templates/<%= template.id %>/edit">Edit</a>
+                        <form action="/admin/templates/<%= template.id %>?_method=DELETE" method="POST" style="display:inline;">
+                            <button type="submit">Delete</button>
+                        </form>
+                        <button type="button" onclick="testTemplate('<%= template.id %>')" style="margin-left: 5px;">Test</button>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+<% } else { %>
+    <p>No Templafy items found.</p>
+<% } %>
+
+<div id="testResult" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; background-color: #f9f9f9; display: none;">
+    <h3>Test Result:</h3>
+    <pre id="testResultContent"></pre>
+</div>
+
+<script>
+    async function testTemplate(templateId) {
+        const email = prompt("Please enter the email address to use for testing:");
+        if (!email) {
+            alert("Email address is required for testing.");
+            return;
+        }
+
+        const resultDiv = document.getElementById("testResult");
+        const resultContent = document.getElementById("testResultContent");
+        resultDiv.style.display = "block";
+        resultContent.textContent = "Testing...";
+
+        try {
+            const response = await fetch(`/admin/templates/${templateId}/test`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    // Add CSRF token header if needed
+                },
+                body: JSON.stringify({ email: email })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || `HTTP error! status: ${response.status}`);
+            }
+
+            resultContent.textContent = JSON.stringify(data, null, 2);
+
+        } catch (error) {
+            console.error("Test failed:", error);
+            resultContent.textContent = `Error: ${error.message}`;
+        }
+    }
+</script>
+

@@ -1,0 +1,38 @@
+<h2><%= title %></h2>
+
+<% if (error) { %>
+    <p class="error"><%= error %></p>
+<% } %>
+
+<%# No longer using enctype="multipart/form-data" %>
+<form action="/admin/templates" method="post">
+    <div>
+        <label for="name">Item Name:</label>
+        <input type="text" id="name" name="name" value="<%= template ? template.name : '' %>" required>
+    </div>
+    <div>
+        <label for="description">Description:</label>
+        <textarea id="description" name="description"><%= template ? template.description : '' %></textarea>
+    </div>
+    <div>
+        <label for="spaceId">Templafy Space ID:</label>
+        <input type="text" id="spaceId" name="spaceId" value="<%= template ? template.spaceId : '' %>" required>
+    </div>
+    <div>
+        <label for="assetId">Templafy Asset ID:</label>
+        <input type="text" id="assetId" name="assetId" value="<%= template ? template.assetId : '' %>" required>
+    </div>
+    <div>
+        <label for="documentType">Templafy Document Type:</label>
+        <select id="documentType" name="documentType" required>
+            <option value="document" <%= (template && template.documentType === 'document') ? 'selected' : '' %>>Document</option>
+            <option value="presentation" <%= (template && template.documentType === 'presentation') ? 'selected' : '' %>>Presentation</option>
+        </select>
+    </div>
+    <%# Removed file input %>
+    <div>
+        <button type="submit"><%= template ? 'Update' : 'Add' %> Item</button>
+        <a href="/admin/templates">Cancel</a>
+    </div>
+</form>
+

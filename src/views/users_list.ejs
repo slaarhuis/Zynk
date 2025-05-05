@@ -1,0 +1,42 @@
+<h2><%= title %></h2>
+
+<a href="/admin/users/new">Add New User</a>
+
+<% if (users && users.length > 0) { %>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Created At</th>
+                <th>Updated At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% users.forEach(u => { %>
+                <tr>
+                    <td><%= u.id %></td>
+                    <td><%= u.username %></td>
+                    <td><%= u.createdAt.toLocaleString() %></td>
+                    <td><%= u.updatedAt.toLocaleString() %></td>
+                    <td>
+                        <%# Prevent deleting the currently logged-in user %>
+                        <% if (user.id !== u.id) { %>
+                            <!-- TODO: Add Edit/Delete links/forms -->
+                            <a href="/admin/users/<%= u.id %>/edit">Edit</a>
+                            <form action="/admin/users/<%= u.id %>?_method=DELETE" method="POST" style="display:inline;">
+                                <button type="submit">Delete</button>
+                            </form>
+                        <% } else { %>
+                            (Current User)
+                        <% } %>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+<% } else { %>
+    <p>No users found.</p>
+<% } %>
+
